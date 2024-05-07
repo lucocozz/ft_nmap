@@ -1,0 +1,44 @@
+NAME = ft_nmap
+BIN = $(NAME)
+BUILD_DIR = .build
+
+all: build compile
+
+build:
+	meson setup $(BUILD_DIR)
+
+reconfigure:
+	meson setup --reconfigure $(BUILD_DIR)
+
+wipe:
+	meson setup --wipe $(BUILD_DIR)
+
+compile:
+	meson compile -C $(BUILD_DIR)
+	@ln -sf $(BUILD_DIR)/$(BIN) $(BIN)
+
+clean:
+	@rm -rf $(BIN)
+	@echo "Executable removed ✅"
+
+fclean: clean
+	@rm -rf $(BUILD_DIR)
+	@echo "Build directory cleaned ✅"
+
+re: reconfigure compile
+help:
+	@echo "Usage: make [target]"
+	@echo ""
+	@echo "Targets:"
+	@echo "  all          - build and compile"
+	@echo "  build        - build project"
+	@echo "  reconfigure  - reconfigure project"
+	@echo "  wipe         - wipe build directory"
+	@echo "  compile      - compile project"
+	@echo "  clean        - remove executable"
+	@echo "  fclean       - clean build directory and remove executable"
+	@echo "  re           - reconfigure and compile"
+	@echo "  help         - print this help message"
+
+
+.PHONY: all build compile clean fclean re reconfigure wipe help
