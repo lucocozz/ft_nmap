@@ -3,7 +3,8 @@
 
 int	main(int argc, char **argv)
 {
-	(void)argv;
-	(void)argc;
+	cli_t	cli = parse_cli(argc, argv);
+
+	printf("Target: %s\n", cli.target);
 	return (EXIT_SUCCESS);
 }

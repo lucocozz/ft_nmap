@@ -10,4 +10,9 @@
 #include <stddef.h>
 #include <stdint.h>
 
+#include <toolbox.h>
+
+#include "cli.h"
+
+
 #endif // FT_NMAP_H

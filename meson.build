@@ -3,6 +3,7 @@ project(
 	default_options: [
 		'warning_level=3',
 		'werror=true',
+		'debug=true',
 	]
 )
 
@@ -20,10 +21,12 @@ foreach cflag : cflags
 	endif
 endforeach
 
+subdir('libs')
 subdir('sources')
 
 executable(
 	meson.project_name(),
 	sources,
-	include_directories: include_directories('includes'),
+	include_directories: libs_includes + include_directories('includes'),
+	link_with: libs,
 )
