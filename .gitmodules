@@ -1,0 +1,3 @@
+[submodule "libs/toolbox"]
+	path = libs/toolbox
+	url = git@github.com:lucocozz/lib_toolbox_c.git
