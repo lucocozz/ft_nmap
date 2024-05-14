@@ -1,16 +1,10 @@
 #include "cli.h"
 
-static void __default_handler(cli_t *cli, char *arg)
-{
-	UNUSED(cli);
-	printf("arg=%s\n", arg);
-}
-
 static const cli_option_t	g_options[] = {
-	{.short_flag = "-h", .long_flag = "--help",   .has_argument = false, .arg_handler = __default_handler},
-	{.short_flag = "-f", .long_flag = "--file",   .has_argument = false, .arg_handler = __default_handler},
-	{.short_flag = "-p", .long_flag = "--ports",  .has_argument = true,  .arg_handler = __default_handler},
-	{.short_flag = "-t", .long_flag = "--thread", .has_argument = true,  .arg_handler = __default_handler},
+	{.short_flag = "-h", .long_flag = "--help",   .has_argument = false, .arg_handler = arg_help_handler},
+	{.short_flag = "-f", .long_flag = "--file",   .has_argument = true,  .arg_handler = arg_file_handler},
+	{.short_flag = "-p", .long_flag = "--ports",  .has_argument = true,  .arg_handler = arg_ports_handler},
+	{.short_flag = "-t", .long_flag = "--thread", .has_argument = true,  .arg_handler = arg_thread_handler},
 };
 
 
@@ -32,28 +26,26 @@ static int	__parse_options(cli_t *cli, int argc, char **argv)
 
 	for (int i = 1; i < argc; ++i)
 	{
-		// TODO: Allow multiple targets (Bonus)
-		if (start_with("-", argv[i]) == false) {
-			cli->target = argv[i];
-			continue ;
-		}
+		if (start_with("-", argv[i]) == true)
+		{
+			option = __get_option(argv[i]);
+			if (option == NULL) {
+				fprintf(stderr, "Error: '%s' unknown option\n", argv[i]);
+				return (-1);
+			}
 
-		option = __get_option(argv[i]);
-		if (option == NULL) {
-			fprintf(stderr, "Error: '%s' unknown option\n", argv[i]);
+			if (option->has_argument == true)
+				++i;
+
+			if (option->arg_handler == NULL) {
+				fprintf(stderr, "Error: '%s' option has no handler\n", argv[i]);
+				return (-1);
+			}
+			option->arg_handler(cli, argv[i]);
+		}
+		else if (target_push_front_new(&cli->targets, argv[i]) == NULL)
 			return (-1);
-		}
-
-		if (option->has_argument == true)
-			++i;
-
-		if (option->arg_handler == NULL) {
-			fprintf(stderr, "Error: '%s' option has no handler\n", argv[i]);
-			return (-1);
-		}
-		option->arg_handler(cli, argv[i]);
 	}
-
 	return (0);
 }
 
@@ -66,11 +58,14 @@ cli_t parse_cli(int argc, char **argv)
 		exit(EXIT_FAILURE);
 	}
 
-	if (__parse_options(&cli, argc, argv) == -1)
+	if (__parse_options(&cli, argc, argv) == -1) {
+		free_cli(&cli);
 		exit(EXIT_FAILURE);
+	}
 
-	if (cli.target == NULL) {
+	if (cli.targets == NULL) {
 		fprintf(stderr, "Error: No target specified\n");
+		free_cli(&cli);
 		exit(EXIT_FAILURE);
 	}
 
