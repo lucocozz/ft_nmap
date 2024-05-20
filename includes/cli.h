@@ -13,6 +13,7 @@
 #include <string.h>
 #include <toolbox/string.h>
 #include <toolbox/def.h>
+#include <rbtree.h>
 
 #define PROGRAM_HELPER 															\
 "Usage: ft_nmap [OPTIONS] <target>\n"											\
@@ -29,7 +30,7 @@ typedef struct target_list_s {
 typedef struct cli_s {
 	target_list_t	*targets;
 	int				threads;
-	int				*ports;
+	RBTree_t		*ports;
 } cli_t;
 
 #define INITIALIZE_CLI	\

@@ -1,10 +1,12 @@
 project(
 	'ft_nmap', ['c'],
+	version: '0.1',
 	default_options: [
 		'warning_level=3',
 		'werror=true',
 		'debug=true',
-	]
+	],
+	subproject_dir: 'libs',
 )
 
 
@@ -21,12 +23,22 @@ foreach cflag : cflags
 	endif
 endforeach
 
-subdir('libs')
+
+rbtree_dep = subproject('rbtree', required: true).get_variable('rbtree_dep')
+toolbox_dep = subproject('toolbox', required: true).get_variable('toolbox_dep')
+
+
+deps = [
+	rbtree_dep,
+	toolbox_dep
+]
+
+# subdir('libs')
 subdir('sources')
 
 executable(
 	meson.project_name(),
 	sources,
-	include_directories: libs_includes + include_directories('includes'),
-	link_with: libs,
+	dependencies: deps,
+	include_directories: include_directories('includes'),
 )

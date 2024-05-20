@@ -1,3 +1,6 @@
 [submodule "libs/toolbox"]
 	path = libs/toolbox
 	url = git@github.com:lucocozz/lib_toolbox_c.git
+[submodule "libs/rbtree"]
+	path = libs/rbtree
+	url = git@github.com:lucocozz/lib_rbtree_c.git

@@ -54,3 +54,4 @@ dkms.conf
 .build/
 .vscode/
 ft_nmap
+peda*

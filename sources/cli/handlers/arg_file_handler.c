@@ -2,9 +2,9 @@
 
 void	arg_file_handler(cli_t *cli, char *arg)
 {
-	FILE	*file = fopen(arg, "r");
+	FILE *file = fopen(arg, "r");
 
-	if (arg == NULL) {
+	if (file == NULL) {
 		fprintf(stderr, "Error: cannot open file '%s'\n", arg);
 		free_cli(cli);
 		exit(EXIT_FAILURE);
