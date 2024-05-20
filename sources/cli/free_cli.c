@@ -3,8 +3,8 @@
 void free_cli(cli_t *cli)
 {
 	if (cli->ports != NULL)
-		free(cli->ports);
+		rbt_destroy(cli->ports);
 
 	if (cli->targets != NULL)
-		free_targets(&cli->targets);
+		rbt_destroy(cli->targets);
 }

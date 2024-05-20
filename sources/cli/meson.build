@@ -1,5 +1,4 @@
 subdir('handlers')
-subdir('target')
 
 cli = files([
 	'parse_cli.c',
@@ -7,6 +6,5 @@ cli = files([
 ])
 
 cli += (
-	cli_handlers +
-	cli_target
+	cli_handlers
 )

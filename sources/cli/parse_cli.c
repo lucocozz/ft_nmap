@@ -43,7 +43,7 @@ static int	__parse_options(cli_t *cli, int argc, char **argv)
 			}
 			option->arg_handler(cli, argv[i]);
 		}
-		else if (target_push_front_new(&cli->targets, argv[i]) == NULL)
+		else if (rbt_insert(cli->targets, argv[i], RBT_COPY_DATA) == ENOMEM)
 			return (-1);
 	}
 	return (0);
@@ -58,12 +58,18 @@ cli_t parse_cli(int argc, char **argv)
 		exit(EXIT_FAILURE);
 	}
 
+	cli.targets = rbt_new(RBT_STR);
+	if (cli.targets == NULL) {
+		fprintf(stderr, "Error: failed to parse cli\n");
+		exit(EXIT_FAILURE);
+	}
+
 	if (__parse_options(&cli, argc, argv) == -1) {
 		free_cli(&cli);
 		exit(EXIT_FAILURE);
 	}
 
-	if (cli.targets == NULL) {
+	if (cli.targets->size == 0) {
 		fprintf(stderr, "Error: No target specified\n");
 		free_cli(&cli);
 		exit(EXIT_FAILURE);

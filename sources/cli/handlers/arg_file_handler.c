@@ -17,8 +17,8 @@ void	arg_file_handler(cli_t *cli, char *arg)
 	while ((read = getline(&line, &len, file)) != -1)
 	{
 		if (line[read - 1] == '\n')
-			line[read - 1] = '\0';	
-		target_push_front_new(&cli->targets, line);
+			line[read - 1] = '\0';
+		rbt_insert(cli->targets, line, RBT_ALLOC_DATA);
 	}
 	if (line != NULL)
 		free(line);

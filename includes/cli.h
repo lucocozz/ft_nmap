@@ -28,9 +28,9 @@ typedef struct target_list_s {
 } target_list_t;
 
 typedef struct cli_s {
-	target_list_t	*targets;
-	int				threads;
-	RBTree_t		*ports;
+	RBTree_t	*targets;
+	int			threads;
+	RBTree_t	*ports;
 } cli_t;
 
 #define INITIALIZE_CLI	\
@@ -57,13 +57,6 @@ typedef struct cli_option_s {
 cli_t	parse_cli(int argc, char **argv);
 void	free_cli(cli_t *cli);
 
-/* CLI/TARGET */
-void			targets_from_file(cli_t *cli);
-void			free_targets(target_list_t **targets);
-target_list_t	*target_push_back_new(target_list_t **targets, char *name);
-target_list_t	*target_push_front_new(target_list_t **targets, char *name);
-target_list_t	*target_new(char *name);
-void			print_targets(target_list_t *targets);
 
 /* CLI/HANDLERS */
 void	arg_file_handler(cli_t *cli, char *arg);
