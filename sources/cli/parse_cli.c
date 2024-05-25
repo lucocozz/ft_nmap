@@ -1,14 +1,15 @@
 #include "cli.h"
 
 static const cli_option_t	g_options[] = {
-	{.short_flag = "-h", .long_flag = "--help",   .has_argument = false, .arg_handler = arg_help_handler},
-	{.short_flag = "-f", .long_flag = "--file",   .has_argument = true,  .arg_handler = arg_file_handler},
-	{.short_flag = "-p", .long_flag = "--ports",  .has_argument = true,  .arg_handler = arg_ports_handler},
-	{.short_flag = "-t", .long_flag = "--thread", .has_argument = true,  .arg_handler = arg_thread_handler},
+	{.short_flag = "-h",  .long_flag = "--help",          .has_argument = false, .arg_handler = arg_help_handler},
+	{.short_flag = "-f",  .long_flag = "--file",          .has_argument = true,  .arg_handler = arg_file_handler},
+	{.short_flag = "-p",  .long_flag = "--ports",         .has_argument = true,  .arg_handler = arg_ports_handler},
+	{.short_flag = "-ep", .long_flag = "--exclude-ports", .has_argument = true,  .arg_handler = arg_exclude_ports_handler},
+	{.short_flag = "-t",  .long_flag = "--thread",        .has_argument = true,  .arg_handler = arg_thread_handler},
 };
 
 
-static const cli_option_t	*__get_option(char *flag)
+static const cli_option_t*	__get_option(char *flag)
 {
 	for (uint8_t i = 0; i < ARRAY_SIZE(g_options); ++i)
 	{
@@ -20,7 +21,7 @@ static const cli_option_t	*__get_option(char *flag)
 	return (NULL);
 }
 
-static int	__parse_options(cli_t *cli, int argc, char **argv)
+static int	__parse_options(cli_builder_t *cli_builder, int argc, char **argv)
 {
 	const cli_option_t	*option;
 
@@ -41,39 +42,102 @@ static int	__parse_options(cli_t *cli, int argc, char **argv)
 				fprintf(stderr, "Error: '%s' option has no handler\n", argv[i]);
 				return (-1);
 			}
-			option->arg_handler(cli, argv[i]);
+			option->arg_handler(cli_builder, argv[i]);
 		}
-		else if (rbt_insert(cli->targets, argv[i], RBT_COPY_DATA) == ENOMEM)
+		else if (rbt_insert(cli_builder->targets, argv[i]) == ENOMEM)
 			return (-1);
 	}
 	return (0);
 }
 
+static void	__exclude_ports(cli_builder_t *cli_builder)
+{
+	RBT_Iter_t	*it = rbt_begin(cli_builder->excluded_ports);
+
+	while (it != NULL)
+	{
+		RBT_Iter_t	*to_erase = it;
+		rbt_it_next(&it);
+		rbt_erase(cli_builder->ports, to_erase->data);
+	}
+}
+
+static int*	__build_ports(RBTree_t *ports)
+{
+	int *ports_array = malloc(sizeof(int) * ports->size);
+	if (ports == NULL)
+		return (NULL);
+
+	RBT_Iter_t	*it = rbt_begin(ports);
+	for (uint i = 0; it != NULL; ++i) {
+		ports_array[i] = *(int*)it->data;
+		rbt_it_next(&it);
+	}
+
+	return (ports_array);
+}
+
+static char**	__build_targets(RBTree_t *targets)
+{
+	char **targets_array = malloc(sizeof(char*) * (targets->size + 1));
+	if (targets_array == NULL)
+		return (NULL);
+
+	size_t i = 0;
+	RBT_Iter_t	*it = rbt_begin(targets);
+	while (it != NULL) {
+		targets_array[i++] = strdup(it->data);
+		rbt_it_next(&it);
+	}
+	targets_array[i] = NULL;
+	return (targets_array);
+}
+
+static cli_t	__build_cli(cli_builder_t *cli_builder)
+{
+	cli_t	cli = INITIALIZE_CLI;
+
+
+	// if (cli_builder->ports == NULL)
+		// cli_builder->ports = __get_default_ports();
+
+	if (cli_builder->excluded_ports != NULL)
+		__exclude_ports(cli_builder);
+	
+	cli.threads = cli_builder->threads;
+	cli.ports_size = cli_builder->ports->size;
+	cli.ports = __build_ports(cli_builder->ports);
+	cli.targets = __build_targets(cli_builder->targets);
+
+	free_cli_builder(cli_builder);
+	return (cli);
+}
+
 cli_t parse_cli(int argc, char **argv)
 {
-	cli_t cli = INITIALIZE_CLI;
+	cli_builder_t cli_builder = INITIALIZE_CLI_BUILDER;
 
 	if (argc == 1) {
 		fprintf(stderr, "%s", PROGRAM_HELPER);
 		exit(EXIT_FAILURE);
 	}
 
-	cli.targets = rbt_new(RBT_STR);
-	if (cli.targets == NULL) {
+	cli_builder.targets = rbt_new(RBT_STR);
+	if (cli_builder.targets == NULL) {
 		fprintf(stderr, "Error: failed to parse cli\n");
 		exit(EXIT_FAILURE);
 	}
 
-	if (__parse_options(&cli, argc, argv) == -1) {
-		free_cli(&cli);
+	if (__parse_options(&cli_builder, argc, argv) == -1) {
+		free_cli_builder(&cli_builder);
 		exit(EXIT_FAILURE);
 	}
 
-	if (cli.targets->size == 0) {
+	if (cli_builder.targets->size == 0) {
 		fprintf(stderr, "Error: No target specified\n");
-		free_cli(&cli);
+		free_cli_builder(&cli_builder);
 		exit(EXIT_FAILURE);
 	}
 
-	return (cli);
+	return (__build_cli(&cli_builder));
 }

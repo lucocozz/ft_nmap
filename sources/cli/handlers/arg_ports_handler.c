@@ -42,7 +42,7 @@ static int	__insert_ports(RBTree_t *ports, _port_range_t range)
 {
 	for (int i = range.start; i <= range.end; ++i)
 	{
-		if (rbt_insert(ports, &i, RBT_ALLOC_DATA) == ENOMEM) {
+		if (rbt_insert(ports, &i) == ENOMEM) {
 			fprintf(stderr, "Failed to parse ports\n");
 			return (-1);
 		}
@@ -52,10 +52,15 @@ static int	__insert_ports(RBTree_t *ports, _port_range_t range)
 
 static RBTree_t	*__parse_ports(char *arg)
 {
-	char		**port_args = split(arg, ",");
-	RBTree_t	*ports = rbt_new(RBT_INT);
+	char **port_args = split(arg, ",");
+	if (port_args == NULL) {
+		fprintf(stderr, "Failed to parse ports\n");
+		return (NULL);
+	}
 
+	RBTree_t *ports = rbt_new(RBT_INT);
 	if (ports == NULL) {
+		free_split(port_args);
 		fprintf(stderr, "Failed to parse ports\n");
 		return (NULL);
 	}
@@ -65,26 +70,36 @@ static RBTree_t	*__parse_ports(char *arg)
 		_port_range_t range;
 
 		if (__port_range(&range, port_args[i]) == -1) {
+			free_split(port_args);
 			rbt_destroy(ports);
 			return (NULL);
 		}
 
 		if (__insert_ports(ports, range) == -1) {
+			free_split(port_args);
 			rbt_destroy(ports);
 			return (NULL);
 		}
 	}
 
+	free_split(port_args);
 	return (ports);
 }
 
-void	arg_ports_handler(cli_t *cli, char *arg)
+void	arg_ports_handler(cli_builder_t *cli_builder, char *arg)
 {
-	RBTree_t	*ports = __parse_ports(arg);
-
-	if (ports == NULL) {
-		free_cli(cli);
+	cli_builder->ports = __parse_ports(arg);
+	if (cli_builder->ports == NULL) {
+		free_cli_builder(cli_builder);
 		exit(EXIT_FAILURE);
 	}
-	cli->ports = ports;
+}
+
+void	arg_exclude_ports_handler(cli_builder_t *cli_builder, char *arg)
+{
+	cli_builder->excluded_ports = __parse_ports(arg);
+	if (cli_builder->excluded_ports == NULL) {
+		free_cli_builder(cli_builder);
+		exit(EXIT_FAILURE);
+	}
 }

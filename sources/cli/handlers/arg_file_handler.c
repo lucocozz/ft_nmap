@@ -1,12 +1,12 @@
 #include "cli.h"
 
-void	arg_file_handler(cli_t *cli, char *arg)
+void	arg_file_handler(cli_builder_t *cli_builder, char *arg)
 {
 	FILE *file = fopen(arg, "r");
 
 	if (file == NULL) {
 		fprintf(stderr, "Error: cannot open file '%s'\n", arg);
-		free_cli(cli);
+		free_cli_builder(cli_builder);
 		exit(EXIT_FAILURE);
 	}
 
@@ -18,7 +18,7 @@ void	arg_file_handler(cli_t *cli, char *arg)
 	{
 		if (line[read - 1] == '\n')
 			line[read - 1] = '\0';
-		rbt_insert(cli->targets, line, RBT_ALLOC_DATA);
+		rbt_insert(cli_builder->targets, line);
 	}
 	if (line != NULL)
 		free(line);
