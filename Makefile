@@ -1,11 +1,14 @@
 NAME = ft_nmap
 BIN = $(NAME)
 BUILD_DIR = .build
+SERVCES_DEST = /tmp/ft_nmap_services
 
 all: build compile
 
 build:
 	meson setup $(BUILD_DIR)
+	@mkdir -p $(SERVCES_DEST)
+	@cp -r services/* $(SERVCES_DEST)
 
 reconfigure:
 	meson setup --reconfigure $(BUILD_DIR)
@@ -23,6 +26,7 @@ clean:
 
 fclean: clean
 	@rm -rf $(BUILD_DIR)
+	@rm -rf $(SERVCES_DEST)
 	@echo "Build directory cleaned ✅"
 
 re: reconfigure compile

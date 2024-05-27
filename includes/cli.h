@@ -15,6 +15,9 @@
 #include <toolbox/def.h>
 #include <rbtree.h>
 
+
+#define DEFAULT_PORTS_PATH "/tmp/ft_nmap_services/default_ports.txt"
+
 #define PROGRAM_HELPER 															\
 "Usage: ft_nmap [OPTIONS] <target>\n"											\
 " -p, --ports <ports list>:   Ports to scan (eg: 1-10 or 1,2,3 or 1,5-15)\n"	\
@@ -80,6 +83,7 @@ void	free_cli_builder(cli_builder_t *cli_builder);
 void	arg_file_handler(cli_builder_t *cli_builder, char *arg);
 void	arg_ports_handler(cli_builder_t *cli_builder, char *arg);
 void	arg_exclude_ports_handler(cli_builder_t *cli_builder, char *arg);
+void	get_default_ports(cli_builder_t *cli_builder);
 void	arg_help_handler(cli_builder_t *cli_builder, char *arg);
 void	arg_thread_handler(cli_builder_t *cli_builder, char *arg);
 

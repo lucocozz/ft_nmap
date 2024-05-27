@@ -97,9 +97,8 @@ static cli_t	__build_cli(cli_builder_t *cli_builder)
 {
 	cli_t	cli = INITIALIZE_CLI;
 
-
-	// if (cli_builder->ports == NULL)
-		// cli_builder->ports = __get_default_ports();
+	if (rbt_empty(cli_builder->ports) == true)
+		get_default_ports(cli_builder);
 
 	if (cli_builder->excluded_ports != NULL)
 		__exclude_ports(cli_builder);
@@ -123,7 +122,9 @@ cli_t parse_cli(int argc, char **argv)
 	}
 
 	cli_builder.targets = rbt_new(RBT_STR);
-	if (cli_builder.targets == NULL) {
+	cli_builder.ports = rbt_new(RBT_INT);
+	if (cli_builder.targets == NULL || cli_builder.ports == NULL) {
+		free_cli_builder(&cli_builder);
 		fprintf(stderr, "Error: failed to parse cli\n");
 		exit(EXIT_FAILURE);
 	}

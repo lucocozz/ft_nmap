@@ -103,3 +103,31 @@ void	arg_exclude_ports_handler(cli_builder_t *cli_builder, char *arg)
 		exit(EXIT_FAILURE);
 	}
 }
+
+void	get_default_ports(cli_builder_t *cli_builder)
+{
+	RBTree_t	*ports = NULL;
+	FILE 		*file = fopen(DEFAULT_PORTS_PATH, "r");
+	
+	if (file == NULL) {
+		fprintf(stderr, "Failed to open " DEFAULT_PORTS_PATH "\n");
+		free_cli_builder(cli_builder);
+		exit(EXIT_FAILURE);
+	}
+
+	size_t	len = 0;
+	char	*line = NULL;
+	ssize_t	read;
+	
+	while ((read = getline(&line, &len, file)) != -1)
+	{
+		if (line[read - 1] == '\n')
+			line[read - 1] = '\0';
+		ports = __parse_ports(line);
+		rbt_merge(cli_builder->ports, ports);
+		rbt_destroy(ports);
+	}
+	if (line != NULL)
+		free(line);
+	fclose(file);
+}
