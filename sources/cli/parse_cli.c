@@ -1,6 +1,8 @@
 #include "ft_nmap/cli.h"
+#include "ft_nmap/scan.h"
 
 static const cli_option_t	g_options[] = {
+	{.short_flag = "-s",  .long_flag = "--scan",          .has_argument = true,  .arg_handler = arg_scan_handler},
 	{.short_flag = "-h",  .long_flag = "--help",          .has_argument = false, .arg_handler = arg_help_handler},
 	{.short_flag = "-f",  .long_flag = "--file",          .has_argument = true,  .arg_handler = arg_file_handler},
 	{.short_flag = "-p",  .long_flag = "--ports",         .has_argument = true,  .arg_handler = arg_ports_handler},
@@ -107,6 +109,10 @@ static cli_t	__build_cli(cli_builder_t *cli_builder)
 	cli.ports_size = cli_builder->ports->size;
 	cli.ports = __build_ports(cli_builder->ports);
 	cli.targets = __build_targets(cli_builder->targets);
+	if (cli_builder->scans == 0)
+		cli.scans = SYN_SCAN;
+	else
+		cli.scans = cli_builder->scans;
 
 	free_cli_builder(cli_builder);
 	return (cli);
