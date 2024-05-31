@@ -1,4 +1,4 @@
-#include "ft_nmap/cli.h"
+#include "nmap/cli.h"
 #include <sys/param.h>
 
 typedef struct _port_range_s {

@@ -1,5 +1,5 @@
-#include "ft_nmap/cli.h"
-#include "ft_nmap/scan.h"
+#include "nmap/cli.h"
+#include "nmap/scan.h"
 
 static const cli_option_t	g_options[] = {
 	{.short_flag = "-s",  .long_flag = "--scan",          .has_argument = true,  .arg_handler = arg_scan_handler},

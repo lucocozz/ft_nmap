@@ -1,5 +1,5 @@
-#include "ft_nmap/cli.h"
-#include "ft_nmap/scan.h"
+#include "nmap/cli.h"
+#include "nmap/scan.h"
 #include <string.h>
 
 typedef struct scan_list {

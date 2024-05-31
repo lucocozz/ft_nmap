@@ -13,8 +13,8 @@
 #include <toolbox.h>
 #include <rbtree.h>
 
-#include "ft_nmap/ports.h"
-#include "ft_nmap/cli.h"
+#include "nmap/ports.h"
+#include "nmap/cli.h"
 
 
 #endif // FT_NMAP_H

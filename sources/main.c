@@ -1,4 +1,4 @@
-#include "ft_nmap.h"
+#include "nmap.h"
 
 
 int	main(int argc, char **argv)
