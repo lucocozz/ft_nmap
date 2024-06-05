@@ -26,11 +26,13 @@ endforeach
 
 rbtree_dep = subproject('rbtree', required: true).get_variable('rbtree_dep')
 toolbox_dep = subproject('toolbox', required: true).get_variable('toolbox_dep')
+nessy_dep = subproject('nessy', required: true).get_variable('nessy_dep')
 
 
 deps = [
 	rbtree_dep,
-	toolbox_dep
+	toolbox_dep,
+	nessy_dep,
 ]
 
 # subdir('libs')

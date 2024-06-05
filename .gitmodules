@@ -4,3 +4,6 @@
 [submodule "libs/rbtree"]
 	path = libs/rbtree
 	url = git@github.com:lucocozz/lib_rbtree_c.git
+[submodule "libs/nessy"]
+	path = libs/nessy
+	url = git@github.com:lucocozz/Nessy-C.git
