@@ -106,7 +106,8 @@ static cli_t	__build_cli(cli_builder_t *cli_builder)
 		__exclude_ports(cli_builder);
 	
 	cli.threads = cli_builder->threads;
-	cli.ports_size = cli_builder->ports->size;
+	cli.nb_ports = cli_builder->ports->size;
+	cli.nb_targets = cli_builder->targets->size;
 	cli.ports = __build_ports(cli_builder->ports);
 	cli.targets = __build_targets(cli_builder->targets);
 	if (cli_builder->scans == 0)

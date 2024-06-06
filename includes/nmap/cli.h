@@ -50,7 +50,8 @@ typedef struct cli_s {
 	char	**targets;
 	int		threads;
 	int		*ports;
-	size_t	ports_size;
+	size_t	nb_ports;
+	size_t	nb_targets;
 	uint8_t	scans;
 } cli_t;
 
@@ -59,7 +60,7 @@ typedef struct cli_s {
 	.targets = NULL,	\
 	.threads = 0,		\
 	.ports = NULL,		\
-	.ports_size = 0,	\
+	.nb_ports = 0,	\
 	.scans = 0,			\
 }
 
