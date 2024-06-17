@@ -13,6 +13,7 @@
 #include <string.h>
 #include <toolbox/string.h>
 #include <toolbox/def.h>
+#include <toolbox/bits.h>
 #include <rbtree.h>
 
 

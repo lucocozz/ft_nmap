@@ -95,25 +95,41 @@ static char**	__build_targets(RBTree_t *targets)
 	return (targets_array);
 }
 
+static uint8_t	__build_scans(uint8_t scans)
+{
+	uint8_t tcp_filter = SYN_SCAN | NULL_SCAN | FIN_SCAN | XMAS_SCAN | ACK_SCAN;
+
+	if (scans == 0)
+		return (SYN_SCAN);
+	if (IS_SINGLE_BIT_SET(scans & tcp_filter) == false) {
+		fprintf(stderr, "Error: Multiple TCP scans are not allowed\n");
+		return (0);
+	}
+	return (scans);
+}
+
 static cli_t	__build_cli(cli_builder_t *cli_builder)
 {
 	cli_t	cli = INITIALIZE_CLI;
 
+	cli.threads = cli_builder->threads;
+	cli.scans = __build_scans(cli_builder->scans);
+	if (cli.scans == 0) {
+		free_cli_builder(cli_builder);
+		exit(EXIT_FAILURE);
+	}
+	
 	if (rbt_empty(cli_builder->ports) == true)
 		get_default_ports(cli_builder);
 
 	if (cli_builder->excluded_ports != NULL)
 		__exclude_ports(cli_builder);
 	
-	cli.threads = cli_builder->threads;
 	cli.nb_ports = cli_builder->ports->size;
-	cli.nb_targets = cli_builder->targets->size;
 	cli.ports = __build_ports(cli_builder->ports);
+	
+	cli.nb_targets = cli_builder->targets->size;
 	cli.targets = __build_targets(cli_builder->targets);
-	if (cli_builder->scans == 0)
-		cli.scans = SYN_SCAN;
-	else
-		cli.scans = cli_builder->scans;
 
 	free_cli_builder(cli_builder);
 	return (cli);

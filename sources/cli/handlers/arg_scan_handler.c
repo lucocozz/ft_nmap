@@ -3,7 +3,7 @@
 #include <string.h>
 
 typedef struct scan_list {
-	scan_type_t	type;
+	scan_type_e	type;
 	char		*name;
 } scan_list_t;
 
@@ -18,7 +18,7 @@ static scan_list_t _g_scan_types[] = {
 };
 
 
-static scan_type_t	__get_scan_type(char *arg)
+static scan_type_e	__get_scan_type(char *arg)
 {
 	for (size_t i = 0; _g_scan_types[i].type; ++i)
 	{
@@ -35,7 +35,7 @@ void	arg_scan_handler(cli_builder_t *cli_builder, char *arg)
 	for (size_t i = 0; scan_args[i]; ++i)
 	{
 		str_upper(scan_args[i]);
-		scan_type_t type = __get_scan_type(scan_args[i]);
+		scan_type_e type = __get_scan_type(scan_args[i]);
 		if (type == 0) {
 			fprintf(stderr, "Error: '%s' unknown scan type\n", scan_args[i]);
 			free_cli_builder(cli_builder);
