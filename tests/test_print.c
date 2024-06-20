@@ -1,5 +1,4 @@
-#include "scan.h"
-
+#include "nmap.h"
 
 /*
  * These will be the structure for the final code
@@ -92,6 +91,7 @@ host_scan_t create_fake_host_scan(char *ip, char *hostname, int nb_ports, int *f
 }
 
 host_scan_t create_unreachable_host_scan(char *ip, char *hostname, int nb_ports) {
+	(void)nb_ports;
 	host_scan_t *host = malloc(sizeof(host_scan_t));
 	host->is_up = false;
 	host->ip = strdup(ip);
@@ -108,6 +108,7 @@ int *get_fake_ports(int nb_ports) {
 	} else if (nb_ports == 20) {
 		return fake_ports_20;
 	}
+	return NULL;
 }
 
 void create_fake_hosts(int nb_fake_host, int nb_ports)
@@ -182,7 +183,7 @@ void print_closed_ports_scan(port_scan_t *ports, scan_type_e scan_type) {
 }
 
 void print_result(int nb_hosts, int nb_ports) {
-	
+	(void)nb_ports;
 	for (int i = 0; i < nb_hosts; i++) {
 		if (hosts[i].is_up) {
 			printf("IP address: %s (%s)\n", hosts[i].ip, hosts[i].hostname);

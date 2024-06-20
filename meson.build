@@ -4,7 +4,6 @@ project(
 	default_options: [
 		'warning_level=3',
 		'werror=true',
-		'debug=true',
 	],
 	subproject_dir: 'libs',
 )
@@ -35,12 +34,20 @@ deps = [
 	nessy_dep,
 ]
 
-# subdir('libs')
 subdir('sources')
+
+main_source = files('sources/main.c')
+includes = include_directories('includes')
 
 executable(
 	meson.project_name(),
-	sources,
+	sources + main_source,
 	dependencies: deps,
-	include_directories: include_directories('includes'),
+	include_directories: includes,
 )
+
+test = get_option('test')
+
+if test
+	subdir('tests')
+endif

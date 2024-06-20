@@ -15,6 +15,7 @@
 
 #include "nmap/ports.h"
 #include "nmap/cli.h"
+#include "nmap/scan.h"
 
 
 #endif // FT_NMAP_H
