@@ -4,6 +4,7 @@ project(
 	default_options: [
 		'warning_level=3',
 		'werror=true',
+		'debug=true',
 	],
 	subproject_dir: 'libs',
 )

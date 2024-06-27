@@ -1,5 +1,6 @@
 #include "nmap/cli.h"
 #include "nmap/scan.h"
+#include "nmap/ports.h"
 
 static const cli_option_t	g_options[] = {
 	{.short_flag = "-s",  .long_flag = "--scan",          .has_argument = true,  .arg_handler = arg_scan_handler},
@@ -66,6 +67,11 @@ static void	__exclude_ports(cli_builder_t *cli_builder)
 
 static int*	__build_ports(RBTree_t *ports)
 {
+	if (ports->size > MAX_PORTS) {
+		fprintf(stderr, "Error: too many ports specified. Maximum is %d, got %ld\n", MAX_PORTS, ports->size);
+		return (NULL);
+	}
+
 	int *ports_array = malloc(sizeof(int) * ports->size);
 	if (ports == NULL)
 		return (NULL);
@@ -127,6 +133,10 @@ static cli_t	__build_cli(cli_builder_t *cli_builder)
 	
 	cli.nb_ports = cli_builder->ports->size;
 	cli.ports = __build_ports(cli_builder->ports);
+	if (cli.ports == NULL) {
+		free_cli_builder(cli_builder);
+		exit(EXIT_FAILURE);
+	}
 	
 	cli.nb_targets = cli_builder->targets->size;
 	cli.targets = __build_targets(cli_builder->targets);
